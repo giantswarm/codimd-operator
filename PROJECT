@@ -1,0 +1,7 @@
+domain: workshop.giantswarm.io
+repo: github.com/giantswarm/codimd-operator
+resources:
+- group: deploy
+  kind: CodiMD
+  version: v1alpha1
+version: "2"

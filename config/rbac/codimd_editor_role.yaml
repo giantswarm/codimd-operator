@@ -1,0 +1,26 @@
+# permissions to do edit codimds.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: codimd-editor-role
+rules:
+- apiGroups:
+  - deploy.workshop.giantswarm.io
+  resources:
+  - codimds
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - deploy.workshop.giantswarm.io
+  resources:
+  - codimds/status
+  verbs:
+  - get
+  - patch
+  - update
