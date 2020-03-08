@@ -3,6 +3,7 @@ module github.com/giantswarm/codimd-operator
 go 1.13
 
 require (
+	github.com/giantswarm/microerror v0.2.0
 	github.com/go-logr/logr v0.1.0
 	github.com/onsi/ginkgo v1.10.1
 	github.com/onsi/gomega v1.7.0

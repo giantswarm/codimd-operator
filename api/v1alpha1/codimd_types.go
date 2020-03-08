@@ -20,21 +20,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// CodiMDSpec defines the desired state of CodiMD
+// CodiMDSpec defines the desired state of CodiMD.
 type CodiMDSpec struct {
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// URL is an example field of CodiMD. Edit CodiMD_types.go to remove/update
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:MinLength=3
+	// URL is the url of a codiMD markdown file.
 	URL string `json:"url,omitempty"`
 }
 
-// CodiMDStatus defines the observed state of CodiMD
+// CodiMDStatus defines the observed state of CodiMD.
 type CodiMDStatus struct {
-	// Important: Run "make" to regenerate code after modifying this file
-
 	// Target is the pod created by the codimd operator.
 	// +optional
 	Target corev1.ObjectReference `json:"target,omitempty"`
@@ -42,8 +37,8 @@ type CodiMDStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-
-// CodiMD is the Schema for the codimds API
+// +kubebuilder:printcolumn:name="URL",type=string,JSONPath=`.spec.url`
+// CodiMD is the Schema for the codimds API.
 type CodiMD struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -53,8 +48,7 @@ type CodiMD struct {
 }
 
 // +kubebuilder:object:root=true
-
-// CodiMDList contains a list of CodiMD
+// CodiMDList contains a list of CodiMD.
 type CodiMDList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`

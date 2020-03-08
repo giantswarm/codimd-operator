@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 
+	"github.com/giantswarm/microerror"
 	appsv1 "k8s.io/api/apps/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -23,7 +24,7 @@ func (r *CodiMDReconciler) delete(ctx context.Context, cr codiv1alpha1.CodiMD) e
 	if apierrors.IsNotFound(err) {
 		return nil
 	} else if err != nil {
-		return err
+		return microerror.Mask(err)
 	}
 
 	// Delete the kubernetes deployment.
@@ -31,7 +32,7 @@ func (r *CodiMDReconciler) delete(ctx context.Context, cr codiv1alpha1.CodiMD) e
 	if apierrors.IsNotFound(err) {
 		return nil
 	} else if err != nil {
-		return err
+		return microerror.Mask(err)
 	}
 
 	return nil

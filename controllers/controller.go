@@ -18,8 +18,10 @@ package controllers
 import (
 	"context"
 
+	"github.com/giantswarm/microerror"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -33,9 +35,10 @@ const (
 
 // CodiMDReconciler reconciles a CodiMD object
 type CodiMDReconciler struct {
-	MgrClient client.Client
-	Log       logr.Logger
-	Scheme    *runtime.Scheme
+	Log              logr.Logger
+	MgrEventRecorder record.EventRecorder
+	MgrClient        client.Client
+	Scheme           *runtime.Scheme
 }
 
 // +kubebuilder:rbac:groups=deploy.workshop.giantswarm.io,resources=codimds,verbs=get;list;watch;create;update;patch;delete
@@ -55,32 +58,32 @@ func (r *CodiMDReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		if !containsString(cr.ObjectMeta.Finalizers, finalizerName) {
 			cr.ObjectMeta.Finalizers = append(cr.ObjectMeta.Finalizers, finalizerName)
 			if err := r.MgrClient.Update(ctx, &cr); err != nil {
-				return ctrl.Result{}, err
+				return ctrl.Result{}, microerror.Mask(err)
 			}
 		}
 
 		// Try to get a k8s deployment from the remote URL.
 		deployment, err := hack.GetDeployment(logger, cr.Spec.URL)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, microerror.Mask(err)
 		}
 
 		// Call the create func to handle creation.
 		err = r.create(ctx, cr, deployment)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, microerror.Mask(err)
 		}
 	} else {
 		// Call the delete func to handle deletion.
 		err := r.delete(ctx, cr)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, microerror.Mask(err)
 		}
 
 		// Remove our finalizer if deletion completed successfully.
 		cr.ObjectMeta.Finalizers = removeString(cr.ObjectMeta.Finalizers, finalizerName)
 		if err := r.MgrClient.Update(ctx, &cr); err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, microerror.Mask(err)
 		}
 	}
 

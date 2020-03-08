@@ -68,9 +68,10 @@ func main() {
 	}
 
 	if err = (&controllers.CodiMDReconciler{
-		MgrClient: mgr.GetClient(),
-		Log:       ctrl.Log.WithName("controllers").WithName("CodiMD"),
-		Scheme:    mgr.GetScheme(),
+		MgrEventRecorder: mgr.GetEventRecorderFor("codimd-controller"),
+		MgrClient:        mgr.GetClient(),
+		Log:              ctrl.Log.WithName("controllers").WithName("CodiMD"),
+		Scheme:           mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "CodiMD")
 		os.Exit(1)

@@ -8,6 +8,10 @@ metadata:
   creationTimestamp: null
   name: codimds.deploy.workshop.giantswarm.io
 spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.url
+    name: URL
+    type: string
   group: deploy.workshop.giantswarm.io
   names:
     kind: CodiMD
@@ -19,7 +23,7 @@ spec:
     status: {}
   validation:
     openAPIV3Schema:
-      description: CodiMD is the Schema for the codimds API
+      description: CodiMD is the Schema for the codimds API.
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -34,15 +38,15 @@ spec:
         metadata:
           type: object
         spec:
-          description: CodiMDSpec defines the desired state of CodiMD
+          description: CodiMDSpec defines the desired state of CodiMD.
           properties:
             url:
-              description: URL is an example field of CodiMD. Edit CodiMD_types.go
-                to remove/update
+              description: URL is the url of a codiMD markdown file.
+              minLength: 3
               type: string
           type: object
         status:
-          description: CodiMDStatus defines the observed state of CodiMD
+          description: CodiMDStatus defines the observed state of CodiMD.
           properties:
             target:
               description: Target is the pod created by the codimd operator.

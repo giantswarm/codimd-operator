@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/giantswarm/microerror"
 	appsv1 "k8s.io/api/apps/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	ref "k8s.io/client-go/tools/reference"
@@ -19,21 +21,23 @@ func (r *CodiMDReconciler) create(ctx context.Context, cr codiv1alpha1.CodiMD, d
 			return err
 		}
 	} else if err != nil {
-		return err
+		return microerror.Mask(err)
+	} else {
+		r.MgrEventRecorder.Event(&cr, "Normal", "Created", fmt.Sprintf("Created deployment %s/%s", deployment.Namespace, deployment.Name))
 	}
 
 	// Update the status with a reference to the deployment.
 	if cr.Status.Target.ResourceVersion == "" {
 		deploymentRef, err := ref.GetReference(r.Scheme, deployment)
 		if err != nil {
-			return err
+			return microerror.Mask(err)
 		}
 		cr.Status.Target = *deploymentRef
 
 		// Execute the update of the status against the kubernetes API.
 		err = r.MgrClient.Status().Update(ctx, &cr)
 		if err != nil {
-			return err
+			return microerror.Mask(err)
 		}
 	}
 
