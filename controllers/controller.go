@@ -51,7 +51,7 @@ func (r *CodiMDReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 
 	if cr.ObjectMeta.DeletionTimestamp.IsZero() {
-		// Add our finalizer if it is not already present
+		// Add our finalizer if it is not already present.
 		if !containsString(cr.ObjectMeta.Finalizers, finalizerName) {
 			cr.ObjectMeta.Finalizers = append(cr.ObjectMeta.Finalizers, finalizerName)
 			if err := r.MgrClient.Update(ctx, &cr); err != nil {
@@ -59,20 +59,25 @@ func (r *CodiMDReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			}
 		}
 
+		// Try to get a k8s deployment from the remote URL.
 		deployment, err := hack.GetDeployment(logger, cr.Spec.URL)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
+
+		// Call the create func to handle creation.
 		err = r.create(ctx, cr, deployment)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 	} else {
+		// Call the delete func to handle deletion.
 		err := r.delete(ctx, cr)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 
+		// Remove our finalizer if deletion completed successfully.
 		cr.ObjectMeta.Finalizers = removeString(cr.ObjectMeta.Finalizers, finalizerName)
 		if err := r.MgrClient.Update(ctx, &cr); err != nil {
 			return ctrl.Result{}, err

@@ -11,12 +11,14 @@ import (
 )
 
 func (r *CodiMDReconciler) delete(ctx context.Context, cr codiv1alpha1.CodiMD) error {
+	// Get the deployment reference we want to delete from our CR status.
 	key := types.NamespacedName{
 		Name:      cr.Status.Target.Name,
 		Namespace: cr.Status.Target.Namespace,
 	}
 	var deployment appsv1.Deployment
 
+	// Get the actual kubernetes deployment with information from our status.
 	err := r.MgrClient.Get(ctx, key, &deployment)
 	if apierrors.IsNotFound(err) {
 		return nil
@@ -24,6 +26,7 @@ func (r *CodiMDReconciler) delete(ctx context.Context, cr codiv1alpha1.CodiMD) e
 		return err
 	}
 
+	// Delete the kubernetes deployment.
 	err = r.MgrClient.Delete(ctx, &deployment)
 	if apierrors.IsNotFound(err) {
 		return nil

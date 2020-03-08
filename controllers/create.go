@@ -11,6 +11,7 @@ import (
 )
 
 func (r *CodiMDReconciler) create(ctx context.Context, cr codiv1alpha1.CodiMD, deployment *appsv1.Deployment) error {
+	// Create or update the k8s deployment.
 	err := r.MgrClient.Create(ctx, deployment)
 	if apierrors.IsAlreadyExists(err) {
 		err = r.MgrClient.Update(ctx, deployment)
@@ -21,14 +22,15 @@ func (r *CodiMDReconciler) create(ctx context.Context, cr codiv1alpha1.CodiMD, d
 		return err
 	}
 
+	// Update the status with a reference to the deployment.
 	if cr.Status.Target.ResourceVersion == "" {
 		deploymentRef, err := ref.GetReference(r.Scheme, deployment)
 		if err != nil {
 			return err
 		}
-
 		cr.Status.Target = *deploymentRef
 
+		// Execute the update of the status against the kubernetes API.
 		err = r.MgrClient.Status().Update(ctx, &cr)
 		if err != nil {
 			return err
