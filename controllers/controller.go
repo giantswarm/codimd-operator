@@ -44,8 +44,7 @@ type CodiMDReconciler struct {
 // +kubebuilder:rbac:groups=deploy.workshop.giantswarm.io,resources=codimds,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=deploy.workshop.giantswarm.io,resources=codimds/status,verbs=get;update;patch
 
-func (r *CodiMDReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *CodiMDReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := r.Log.WithValues("codimd", req.NamespacedName)
 
 	var cr codiv1alpha1.CodiMD

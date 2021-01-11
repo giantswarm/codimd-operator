@@ -16,7 +16,6 @@ limitations under the License.
 package v1alpha1
 
 import (
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -30,9 +29,19 @@ type CodiMDSpec struct {
 
 // CodiMDStatus defines the observed state of CodiMD.
 type CodiMDStatus struct {
-	// Target is the pod created by the codimd operator.
+	// Target is the deployment created by the codimd operator.
 	// +optional
-	Target corev1.ObjectReference `json:"target,omitempty"`
+	Target CodiMDStatusTarget `json:"target,omitempty"`
+}
+
+// CodiMDStatusTarget defines the observed state of a Deployment from CodiMD.
+type CodiMDStatusTarget struct {
+	// Name is the pod created by the codimd operator.
+	// +optional
+	Name string `json:"name,omitempty"`
+	// Namespace is the pod created by the codimd operator.
+	// +optional
+	Namespace string `json:"namespace,omitempty"`
 }
 
 // +kubebuilder:object:root=true

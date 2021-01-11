@@ -27,12 +27,13 @@ func (r *CodiMDReconciler) create(ctx context.Context, cr codiv1alpha1.CodiMD, d
 	}
 
 	// Update the status with a reference to the deployment.
-	if cr.Status.Target.ResourceVersion == "" {
+	if cr.Status.Target.Name == "" {
 		deploymentRef, err := ref.GetReference(r.Scheme, deployment)
 		if err != nil {
 			return microerror.Mask(err)
 		}
-		cr.Status.Target = *deploymentRef
+		cr.Status.Target.Name = deploymentRef.Name
+		cr.Status.Target.Namespace = deploymentRef.Namespace
 
 		// Execute the update of the status against the kubernetes API.
 		err = r.MgrClient.Status().Update(ctx, &cr)
