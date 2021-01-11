@@ -1,6 +1,6 @@
 apiVersion: deploy.workshop.giantswarm.io/v1alpha1
 kind: CodiMD
 metadata:
-  name: codimd-sample
+  name: sample
 spec:
   url: "https://hackmd.okfn.de/twCMfpwDSC2bv_Xh3cPgaw/download"
